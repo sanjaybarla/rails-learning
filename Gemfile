@@ -8,7 +8,7 @@ gem 'sqlite3', '~> 1.4'
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
-gem 'sidekiq', '<7'
+gem 'sidekiq', '<8'
 
 
 gem 'rack', '~> 2.0'
