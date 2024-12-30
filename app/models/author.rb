@@ -182,7 +182,7 @@ class Author < ApplicationRecord
     if dob.present? && age < 18
       errors.add(:dob, "must correspond to an age of at least 18 years. Your age is #{age}.")
       # Rails.logger.info "Must corresponding to an age of at least 18 years."
-      # AuthorLoggerJob.perform_later("Age validation failed for Author #{id}. Age is #{age}.")
+      AuthorLoggerJob.perform_later("Age validation failed for Author #{id}. Age is #{age}.")
     end
   end
 
@@ -192,7 +192,7 @@ class Author < ApplicationRecord
     if dob_changed?
       # Rails.logger.info "Author #{id} changed date of birth"
       # AuthorLoggerJob.perform_later("Author #{id} changed date of birth.")
-      AuthorLoggerJob.perform_later("Author #{id} changed date of birth to #{dob}")
+      AuthorLoggerJob.perform_async("Author #{id} changed date of birth to #{dob}")
     end
 
     if gender_changed?
