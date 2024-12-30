@@ -62,10 +62,7 @@ class Author < ApplicationRecord
   before_create do
     self.name = self.name.capitalize
   end
-
-  #need to add callback
-  after_update :log_changes
-
+  
   #proc and lambda
 
   AGEPROC = Proc.new do |age|
@@ -182,27 +179,28 @@ class Author < ApplicationRecord
     if dob.present? && age < 18
       errors.add(:dob, "must correspond to an age of at least 18 years. Your age is #{age}.")
       # Rails.logger.info "Must corresponding to an age of at least 18 years."
-      AuthorLoggerJob.perform_later("Age validation failed for Author #{id}. Age is #{age}.")
+      AuthorLoggerJob.perform_async("Age validation failed for Author #{id}. Age is #{age}.")
     end
   end
 
 
 
   def log_changes
+    Rails.logger.info "Author: #{self.name}"
     if dob_changed?
       # Rails.logger.info "Author #{id} changed date of birth"
       # AuthorLoggerJob.perform_later("Author #{id} changed date of birth.")
       AuthorLoggerJob.perform_async("Author #{id} changed date of birth to #{dob}")
     end
 
-    if gender_changed?
-      # Rails.logger.info "Author #{id} changed gender"
-      AuthorLoggerJob.perform_later("Author #{id} changed gender to #{gender}")
+    if saved_change_to_gender?
+      Rails.logger.info "Author #{id} changed gender"
+      AuthorLoggerJob.perform_in(5.minutes,"Author #{id} changed gender to #{gender}")
     end
   end
 
   def log_creation
-    AuthorLoggerJob.perform_later("Author #{name} was created with the ID: #{id}")
+    AuthorLoggerJob.perform_async("Author #{name} was created with the ID: #{id}")
   end
   # def show_message
   #   puts "Your record was created"

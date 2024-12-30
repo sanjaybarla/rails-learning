@@ -1,6 +1,6 @@
-class AuthorLoggerJob
-  include Sidekiq::Job
-  sidekiq_options queue_as :default
+class AuthorLoggerWorker
+  include Sidekiq::Worker
+  sidekiq_options queue: :default
 
   #retry: false/5
   #retry-queue: 'name that queue'
