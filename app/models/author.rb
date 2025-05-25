@@ -1,16 +1,15 @@
 class Author < ApplicationRecord
   # include AuthorHelper
 
-  # enum :gender, {
-  #   female: 0,
-  #   male: 1,
-  #   other: 2
-  # }, prefix: true
-  #, prefix: true -> gender is prefix
+  enum :gender, {
+    female: 0,
+    male: 1,
+    other: 2
+  }, prefix: true
 
-  enum :gender, %i(female, male, other), prefix: true
+  # enum :gender, %i(female, male, other), prefix: true
 
-  # default_scope {where gender: :female} #it was applied default to the queries
+  # default_scope -> {where(gender: :female)} #it was applied default to the queries
   scope :female_author, -> {where(gender: :female)}
 
   scope :male_authors, ->{ where(gender: :male) }
@@ -22,6 +21,7 @@ class Author < ApplicationRecord
   scope :name_contains, ->(name) { where('name LIKE ?',"%#{name}%") }
 
   scope :limit_to, ->(number) { limit(number)}
+
 
 
   #scope with eager_loading
@@ -36,7 +36,6 @@ class Author < ApplicationRecord
   # enum :gender,
 
   has_many :books
-
   has_many :journals, dependent: :destroy
 
   #belongs-to: nil -> has_one
@@ -62,7 +61,7 @@ class Author < ApplicationRecord
   before_create do
     self.name = self.name.capitalize
   end
-  
+
   #proc and lambda
 
   AGEPROC = Proc.new do |age|
@@ -187,7 +186,7 @@ class Author < ApplicationRecord
 
   def log_changes
     Rails.logger.info "Author: #{self.name}"
-    if dob_changed?
+    if saved_change_to_dob?
       # Rails.logger.info "Author #{id} changed date of birth"
       # AuthorLoggerJob.perform_later("Author #{id} changed date of birth.")
       AuthorLoggerJob.perform_async("Author #{id} changed date of birth to #{dob}")

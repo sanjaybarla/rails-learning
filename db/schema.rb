@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_27_060355) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_25_174128) do
   create_table "authors", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -31,6 +31,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_27_060355) do
   create_table "books_journals", id: false, force: :cascade do |t|
     t.integer "book_id", null: false
     t.integer "journal_id", null: false
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content"
+    t.string "commentable_type", null: false
+    t.integer "commentable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable"
   end
 
   create_table "journals", force: :cascade do |t|
